@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Error <%= error.status %></title>
+</head>
+
+<body>
+    <h1>Error <%= error.status %></h1>
+    <h3><%= message %></h3>
+    <h3>Grab a programmer if you did not expect this...</h3>
+    <pre><%= error.stack %></pre>
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+{
+  "name": "express-boilerplate-ws",
+  "version": "1.0.0",
+  "description": "ExpressJS boilerplate with websocket routers.",
+  "main": "app.js",
+  "scripts": {
+    "start": "@powershell -Command $env:NODE_ENV='production'; $env:PORT='80'; node ./app.js",
+    "dev": "@powershell -Command $env:DEBUG='*'; $env:NODE_ENV='development';nodemon ./app.js"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "ejs": "~2.6.1",
+    "express": "~4.16.1",
+    "express-ws": "^4.0.0",
+    "helmet": "^3.21.1",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "open": "^6.4.0",
+    "ws": "^7.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BogdanCln/express-boilerplate-ws.git"
+  },
+  "author": "Bogdan Calina <bogdan.calina97@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BogdanCln/express-boilerplate-ws/issues"
+  },
+  "homepage": "https://github.com/BogdanCln/express-boilerplate-ws#readme"
+}
