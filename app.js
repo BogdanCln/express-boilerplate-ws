@@ -1,12 +1,12 @@
 const path = require('path'),
     logger = require('morgan'),
     debug = require('debug')('app:server'),
-    open = require('open');
+    open = require('open'),
+    swaggerDocs = require("swagger-jsdoc");
 
 const http = require('http'),
     express = require('express'),
     createError = require('http-errors'),
-    cookieParser = require('cookie-parser'),
     helmet = require("helmet"),
     expressWS = require('express-ws');
 
@@ -23,8 +23,7 @@ var server = http.createServer(app);
 expressWS(app, server);
 
 const indexRouter = require(path.join(__dirname, '/routes/index')),
-    usersRouter = require(path.join(__dirname, '/routes/api-example')),
-    wsRouter = require(path.join(__dirname, "/routes/ws-example"));
+    wsRouter = require(path.join(__dirname, "/routes/WebSocketExample"));
 
 // Secure the app by setting some HTTP response headers
 app.use(helmet());
@@ -39,22 +38,40 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Set up CORS - see https://enable-cors.org 
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
+// Set up CORS - see https://enable-cors.org
+// You should implement CORS if you're planning to use this as a REST API for 3rd party web frontends hosted on other domains 
+// app.use(function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     next();
+// });
+
+// Set up swagger JSDoc
+const swaggerDefinition = {
+    info: {
+        title: "express-boilerplate-ws",
+        version: "1.0.0",
+        description: "Express App with websocket routers.",
+    },
+    host: "localhost:" + port,
+    basePath: "/",
+};
+
+const swaggerSpec = swaggerDocs({
+    swaggerDefinition,
+    apis: ["./routes/*.js"],
 });
 
-// 🍪 cookies 🍪
-app.use(cookieParser());
+app.get("/swagger.json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(swaggerSpec);
+});
 
 // static files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // routers
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/ws', wsRouter);
 
 // Catch 404 and forward to error handler
@@ -101,4 +118,5 @@ function onListening() {
     var addr = server.address();
     debug(`\nListening on port ${addr.port}\n`);
     open("http://127.0.0.1:" + addr.port);
+    open("http://127.0.0.1:" + addr.port + "/docs");
 }

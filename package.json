@@ -17,6 +17,7 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "open": "^6.4.0",
+    "swagger-jsdoc": "^3.4.0",
     "ws": "^7.1.2"
   },
   "devDependencies": {
