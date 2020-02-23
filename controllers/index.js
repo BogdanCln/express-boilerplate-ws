@@ -11,5 +11,10 @@ module.exports = {
     docs: (req, res) => {
         debug(__dirname)
         res.sendFile(path.join(__dirname, "../") + "/public/docs.html");
+    },
+
+    // GET /dirname 
+    dirname: async (req, res, next) => {
+        res.send(path.join(__dirname, "../"));
     }
 }

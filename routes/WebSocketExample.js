@@ -1,49 +1,89 @@
 const express = require('express');
 const WebSocketExampleController = require("../controllers/WebSocketExample");
-const debug = require("debug")("app:WebSocketExampleRouter");
+const debug = require("debug")("app:WebSocketExample");
 
 let router = express.Router();
 
 /**
  * @swagger
- * /ws/listen:
+ * /ws/listen/{endpoint}:
  *   get:
+ *     schemes: [ws]
  *     summary: "[WEBSOCKET UPGRADE] Subscribe to some events"
- *     description: "Used by something to listen for some events"
+ *     description: "Used to listen for events broadcasted on a endpoint"
  *     tags:
- *       - "ws example routes: /ws-example"
- */
-router.ws("/listen", WebSocketExampleController.listen);
-
-/**
- * @swagger
- * /say-hi/name:
- *   get:
- *     summary: GET method test
- *     description: Responds with Hello, <name>!
- *     tags:
- *       - "ws example routes: /ws-example"
+ *       - "WebSocketExample: /ws"
  *     parameters:
  *       - in: path
- *         name: name
+ *         name: endpoint
  *         type: string
  *         required: true
  *     responses:
  *       200:
- *         description: Greeting
+ *         description: Connected
  *       400:
- *         description: No name URL parameter specified
+ *         description: No endpoint URL parameter specified
+ *     x-code-samples:
+ *      - lang: 'RobustWebSocket'
+ *        source: |
+ *          (
+ *              new RobustWebSocket(
+ *                  "ws://127.0.0.1/listen/time",
+ *                  null,
+ *                  { automaticOpen: true })
+ *          )
+ *              .addEventListener('message', event => {
+ *                  console.warn(event.data);
+ *              });
  */
-router.get("/say-hi/:name", WebSocketExampleController.sayHi);
+router.ws("/listen/:endpoint", WebSocketExampleController.listen);
+router.ws("/listen/:controlType/:endpoint", WebSocketExampleController.listen);
+
+/**
+ * @swagger
+ * /ws/control:
+ *   get:
+ *     schemes: [ws]
+ *     summary: "[WEBSOCKET UPGRADE] Broadcast events"
+ *     description: "Used to broadcast messages to listen endpoints"
+ *     tags:
+ *       - "WebSocketExample: /ws"
+ *     responses:
+ *       200:
+ *         description: Connected
+ *     x-code-samples:
+ *      - lang: 'RobustWebSocket'
+ *        source: |
+ *          // listen client
+ *          (
+ *              new RobustWebSocket(
+ *                  "ws://127.0.0.1/listen/test",
+ *                  null,
+ *                  { automaticOpen: true })
+ *          )
+ *              .addEventListener('message', event => {
+ *                  console.warn("Received: " + event.data);
+ *              });
+ * 
+ *          // control client
+ *          (
+ *              new RobustWebSocket(
+ *                  "ws://127.0.0.1/control",
+ *                  null,
+ *                  { automaticOpen: true })
+ *          )
+ *              .addEventListener('open', function (event) {
+ *                  setInterval(() => {
+ *                      this.send(`{"endpoint": "test", "payload": "hello world"}`)
+ *                  }, 500);
+ *              });
+ */
+router.ws("/control", WebSocketExampleController.control);
 
 function sendError(err, req, res, next) {
-    debug(err)
-    if (req.app.get('env') === 'development') {
-        res.set('Content-Type', 'application/json');
-        res.status(400).send(err.stack || err)
-    } else {
-        res.status(400).send();
-    }
+    debug(JSON.stringify(err))
+    res.set('Content-Type', 'application/json');
+    res.status(err.status || 500).send(err.message || err.stack)
 }
 
 router.use(sendError);
