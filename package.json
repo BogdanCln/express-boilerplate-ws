@@ -18,7 +18,7 @@
     "morgan": "~1.9.1",
     "open": "^6.4.0",
     "swagger-jsdoc": "^3.4.0",
-    "ws": "^7.1.2"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
